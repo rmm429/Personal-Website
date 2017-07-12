@@ -1,0 +1,136 @@
+<!doctype html>
+<html><head>
+<meta charset="UTF-8">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+<link type="text/css" rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css"/>
+
+<script type="text/javascript">
+	
+	function display_hourly_forecast()
+	{
+		
+		var location_url = "http://api.wunderground.com/api/eb0f16e30ec25d5c/geolookup/q/autoip.json";
+		
+		$.ajax
+		({
+			type: "GET",
+			url: location_url,
+			contentType: "application/json; charset=utf-8",
+			data: "{}",
+			dataType: "jsonp",
+			success: function(msg)
+			{
+				
+				var location_json = msg;
+
+				var loc_json = location_json.location;
+
+				var zip_code = loc_json.zip;
+				
+				var weather_url = "http://api.wunderground.com/api/eb0f16e30ec25d5c/hourly/q/" + zip_code + ".json";
+				
+				$.ajax
+				({
+					type: "GET",
+					url: weather_url,
+					contentType: "application/json; charset=utf-8",
+					data: "{}",
+					dataType: "jsonp",
+					success: function(msg)
+					{
+						var forecast = msg;
+						
+						var hourly_forecast_array = forecast.hourly_forecast;
+						
+						document.getElementById("hourly_forecast").innerHTML += ("<center><h3>" + "Weather for " + zip_code + "</h3></center>");
+						
+						for (i = 0; i < hourly_forecast_array.length; i++)
+						{
+								
+							var hourly_forecast_info = hourly_forecast_array[i];
+							
+							var time_date_info = hourly_forecast_info.FCTTIME;
+							
+							var time_date_info_string = time_date_info.pretty;
+							
+							document.getElementById("hourly_forecast").innerHTML += ("<center>" + time_date_info_string + "</center>");
+							
+							var temp_info = hourly_forecast_info.temp;
+							
+							var temp_info_string = (temp_info.english) + "°F";
+							
+							var condition = hourly_forecast_info.condition;
+							
+							var temp_condition_string = temp_info_string + ", " + condition;
+							
+							document.getElementById("hourly_forecast").innerHTML += ("<center>" + temp_condition_string + "</center>");
+							
+							var condition_img = hourly_forecast_info.icon_url;
+							
+							document.getElementById("hourly_forecast").innerHTML += ("<center>" + "<img src=\"" + condition_img + "\">" + "</center><br>");
+							
+						}
+						
+					}
+				});
+			}
+		});
+		
+		//document.getElementById("hourly_forecast").innerHTML = zip_code;
+		
+		//var zip_code = get_zip(wu_key);
+		
+		//document.getElementById("hourly_forecast").innerHTML = zip_code;
+		
+		//document.getElementById("hourly_forecast").innerHTML = zip_code;
+		
+		//var weather_url = "http://api.wunderground.com/api/" + wu_key + "/hourly/q/" + zip_code + ".json";
+		
+	}
+
+	
+	/*function get_zip(key)
+	{
+		
+		var zc = "";
+		
+		var location_url = "http://api.wunderground.com/api/" + key + "/geolookup/q/autoip.json";
+		
+		$.ajax
+		({
+			type: "GET",
+			url: location_url,
+			contentType: "application/json; charset=utf-8",
+			data: "{}",
+			dataType: "jsonp",
+			success: function(msg)
+			{
+				var location_json = msg;
+
+				var loc_json = location_json.location;
+
+				zc = loc_json.zip;
+			}
+		});
+		
+	}*/
+	
+	window.onload = display_hourly_forecast;
+	
+</script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Richard Mangerie Lab 2</title>
+</head>
+
+<body>
+
+<div id="hourly_forecast">
+<!-- Empty div -->
+</div>
+
+</body>
+</html>
