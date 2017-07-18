@@ -2,135 +2,274 @@
 <html><head>
 <meta charset="UTF-8">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
-<link type="text/css" rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css"/>
+<!-- Sources for the use of jQuery, jQuery Mobile, and AJAX -->
+<script src="./jquery.min.js"></script>
+<script src="./jquery.mobile.min.js"></script>
+<link type="text/css" rel="stylesheet" href="./jquery.mobile.min.css"/>
+<link rel="stylesheet" href="./jquery.mobile-1.4.5.min.css">
+<script src="./jquery-1.11.3.min.js"></script>
+<script src="./jquery.mobile-1.4.5.min.js"></script>
 
+<!-- JavaScript code -->
 <script type="text/javascript">
 	
+	function make_visible()
+	{
+		document.getElementById("zc").style.visibility = "visible";
+		
+		document.getElementById("zc_btn").style.visibility = "visible";
+		
+	}
+	
+	function get_zip()
+	{
+		var zc = parseInt(document.getElementById("zc").value);
+		
+		if (isNaN(zc) || zc.toString().length != 5)
+		{
+			alert("Please enter a valid zip code!");
+		}
+		else
+		{
+			document.getElementById("zc_header").innerHTML = "Weather for " + zc;
+			
+			document.getElementById("hourly_forecast").innerHTML = "";
+			
+			display_hourly_forecast_specified_zip(zc);
+		}
+	}
+	
+	//Function display_hourly_forecast()
 	function display_hourly_forecast()
 	{
 		
-		var location_url = "http://api.wunderground.com/api/eb0f16e30ec25d5c/geolookup/q/autoip.json";
+		//Producing the location URL given the key
+		var location_url = "https://api.wunderground.com/api/eb0f16e30ec25d5c/geolookup/q/autoip.json";
 		
+		//jQuery AJAX request to get the zip code
 		$.ajax
 		({
+			//Getting information
 			type: "GET",
+			//Data located at the url specified by location_url
 			url: location_url,
+			//Data is of type json
 			contentType: "application/json; charset=utf-8",
+			//No data is sent during the call
 			data: "{}",
+			//Data is returned as a parsed json
 			dataType: "jsonp",
+			//Function that is called upon a successful AJAX request
 			success: function(msg)
 			{
-				
+				//Setting the variable location_json to the returned json data from the call
 				var location_json = msg;
-
+				
+				//Setting the variable loc_json to the value at the key location in location_json
 				var loc_json = location_json.location;
-
+				
+				//Setting the variable zip_code to the value at the key zip in loc_json
 				var zip_code = loc_json.zip;
 				
-				var weather_url = "http://api.wunderground.com/api/eb0f16e30ec25d5c/hourly/q/" + zip_code + ".json";
+				//Creating the weather url by concatenating the value of wu_key and zip_code to other parts of the url
+				var weather_url = "https://api.wunderground.com/api/eb0f16e30ec25d5c/hourly/q/" + zip_code + ".json";
 				
+				//Second jQuery AJAX request to get the hourly forecast
 				$.ajax
 				({
+					//Getting information
 					type: "GET",
+					//Data located at the url specified by weather_url
 					url: weather_url,
+					//Data is of type json
 					contentType: "application/json; charset=utf-8",
+					//No data is sent during the call
 					data: "{}",
+					//Data is returned as a parsed json
 					dataType: "jsonp",
+					//Function that is called upon a successful AJAX request
 					success: function(msg)
 					{
+						
+						//Setting the variable forecast to the returned json data from the call
 						var forecast = msg;
 						
+						//Setting the variable hourly_forecast_array to the value at the key hourly_forecast in forecast
 						var hourly_forecast_array = forecast.hourly_forecast;
 						
-						document.getElementById("hourly_forecast").innerHTML += ("<center><h3>" + "Weather for " + zip_code + "</h3></center>");
+						//Placing a header into the div specified by the ID hourly_forecast
+						document.getElementById("forecast_info").innerHTML += ("<center><h3 id=\"zc_header\">" + "Weather for " + zip_code + "</h3></center>");
 						
+						document.getElementById("forecast_info").innerHTML += ("<center><h5>Not your zip code?</h5><button type=\"button\" onClick=\"make_visible()\">Click here</button></center><br>")
+						
+						document.getElementById("forecast_info").innerHTML += ("<center><input type=\"text\" id=\"zc\" placeholder=\"Enter zip code...\"><button type=\"button\" id=\"zc_btn\" onClick=\"get_zip()\">Get weather</button></center><br>");
+						
+						document.getElementById("zc").style.visibility = "hidden";
+						
+						document.getElementById("zc_btn").style.visibility = "hidden";
+						
+						//Going through each element in the array hourly_forecast_array
 						for (i = 0; i < hourly_forecast_array.length; i++)
 						{
-								
+							
+							//Setting the variable hourly_forecast_info to the value at the index i in the array hourly_forecast_array
 							var hourly_forecast_info = hourly_forecast_array[i];
 							
+							//Setting the variable time_date_info to the value at the key FCTTIME in hourly_forecast_info
 							var time_date_info = hourly_forecast_info.FCTTIME;
 							
+							//Setting the variable time_date_info_string to the value at the key pretty in time_date_info
 							var time_date_info_string = time_date_info.pretty;
 							
+							//Placing the String time_date_info_string into the div specified by the ID hourly_forecast
 							document.getElementById("hourly_forecast").innerHTML += ("<center>" + time_date_info_string + "</center>");
 							
+							//Setting the variable temp_info to the value at the key temp in hourly_forecast_info
 							var temp_info = hourly_forecast_info.temp;
 							
+							//Setting the variable temp_info_string to the value at the key english in temp_info concatenated with "°F"
 							var temp_info_string = (temp_info.english) + "°F";
 							
+							//Setting the variable condition to the value at the key condition in hourly_forecast_info
 							var condition = hourly_forecast_info.condition;
 							
+							//Setting the variable temp_condition_string to the concatenation of temp_info_string and condition separated by a comma
 							var temp_condition_string = temp_info_string + ", " + condition;
 							
+							//Placing the String temp_condition_string into the div specified by the ID hourly_forecast
 							document.getElementById("hourly_forecast").innerHTML += ("<center>" + temp_condition_string + "</center>");
 							
+							//Setting the variable condition_img to the value at the key icon_url in hourly_forecast_info
 							var condition_img = hourly_forecast_info.icon_url;
 							
+							//Placing the String condition_img into the div specified by the ID hourly_forecast as an image
 							document.getElementById("hourly_forecast").innerHTML += ("<center>" + "<img src=\"" + condition_img + "\">" + "</center><br>");
 							
 						}
-						
 					}
 				});
 			}
 		});
-		
-		//document.getElementById("hourly_forecast").innerHTML = zip_code;
-		
-		//var zip_code = get_zip(wu_key);
-		
-		//document.getElementById("hourly_forecast").innerHTML = zip_code;
-		
-		//document.getElementById("hourly_forecast").innerHTML = zip_code;
-		
-		//var weather_url = "http://api.wunderground.com/api/" + wu_key + "/hourly/q/" + zip_code + ".json";
-		
 	}
-
 	
-	/*function get_zip(key)
+	
+	function display_hourly_forecast_specified_zip(zip_code)
 	{
 		
-		var zc = "";
-		
-		var location_url = "http://api.wunderground.com/api/" + key + "/geolookup/q/autoip.json";
-		
+				
+		//Creating the weather url by concatenating the value of wu_key and zip_code to other parts of the url
+		var weather_url = "https://api.wunderground.com/api/eb0f16e30ec25d5c/hourly/q/" + zip_code + ".json";
+
+		//Second jQuery AJAX request to get the hourly forecast
 		$.ajax
 		({
+			//Getting information
 			type: "GET",
-			url: location_url,
+			//Data located at the url specified by weather_url
+			url: weather_url,
+			//Data is of type json
 			contentType: "application/json; charset=utf-8",
+			//No data is sent during the call
 			data: "{}",
+			//Data is returned as a parsed json
 			dataType: "jsonp",
+			//Function that is called upon a successful AJAX request
 			success: function(msg)
 			{
-				var location_json = msg;
 
-				var loc_json = location_json.location;
+				//Setting the variable forecast to the returned json data from the call
+				var forecast = msg;
 
-				zc = loc_json.zip;
+				//Setting the variable hourly_forecast_array to the value at the key hourly_forecast in forecast
+				var hourly_forecast_array = forecast.hourly_forecast;
+
+				//Going through each element in the array hourly_forecast_array
+				for (i = 0; i < hourly_forecast_array.length; i++)
+				{
+
+					//Setting the variable hourly_forecast_info to the value at the index i in the array hourly_forecast_array
+					var hourly_forecast_info = hourly_forecast_array[i];
+
+					//Setting the variable time_date_info to the value at the key FCTTIME in hourly_forecast_info
+					var time_date_info = hourly_forecast_info.FCTTIME;
+
+					//Setting the variable time_date_info_string to the value at the key pretty in time_date_info
+					var time_date_info_string = time_date_info.pretty;
+
+					//Placing the String time_date_info_string into the div specified by the ID hourly_forecast
+					document.getElementById("hourly_forecast").innerHTML += ("<center>" + time_date_info_string + "</center>");
+
+					//Setting the variable temp_info to the value at the key temp in hourly_forecast_info
+					var temp_info = hourly_forecast_info.temp;
+
+					//Setting the variable temp_info_string to the value at the key english in temp_info concatenated with "°F"
+					var temp_info_string = (temp_info.english) + "°F";
+
+					//Setting the variable condition to the value at the key condition in hourly_forecast_info
+					var condition = hourly_forecast_info.condition;
+
+					//Setting the variable temp_condition_string to the concatenation of temp_info_string and condition separated by a comma
+					var temp_condition_string = temp_info_string + ", " + condition;
+
+					//Placing the String temp_condition_string into the div specified by the ID hourly_forecast
+					document.getElementById("hourly_forecast").innerHTML += ("<center>" + temp_condition_string + "</center>");
+
+					//Setting the variable condition_img to the value at the key icon_url in hourly_forecast_info
+					var condition_img = hourly_forecast_info.icon_url;
+
+					//Placing the String condition_img into the div specified by the ID hourly_forecast as an image
+					document.getElementById("hourly_forecast").innerHTML += ("<center>" + "<img src=\"" + condition_img + "\">" + "</center><br>");
+
+				}
 			}
 		});
-		
-	}*/
+	}
 	
+	//Will call the function display_hourly_forecast when the webpage loads
 	window.onload = display_hourly_forecast;
 	
 </script>
 
+<!-- Setting the content scaling of the page -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Richard Mangerie Lab 2</title>
+<!-- The title that will be displayed in the tab of a browser -->
+<title>Get Current Weather</title>
+
 </head>
+
 
 <body>
 
-<div id="hourly_forecast">
-<!-- Empty div -->
-</div>
+<!-- Div that contains the locaiton and weather data, with the role "page" -->
+<div data-role="page" id="pageone">
+	
+	<!-- Div that contains the header of the page -->
+	<div data-role="header">
+		<h1>Get Current Weather</h1>
+	</div>
+	
+	<!-- Div that contains the main content of the page -->
+	<div data-role="main" class="ui-content">
+	
+		<div id="forecast_info" class=“ui-responsive”>
+			<!-- Empty div to start -->
+		</div>
+		
+		<!-- Div that will contain the hourly forecast information -->
+		<div id="hourly_forecast" class=“ui-responsive”>
+			<!-- Empty div to start -->
+		</div>
+		
+  	</div>
+
+	<!-- Div that contains the footer of the page -->
+	<div data-role="footer">
+    	<h1>Created by Richard Mangerie</h1>
+	</div>
+	
+</div> 
 
 </body>
+
 </html>
