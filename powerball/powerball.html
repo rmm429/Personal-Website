@@ -1,0 +1,357 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+
+	<!-- Sources for the use of jQuery, jQuery Mobile, and AJAX -->
+	<script src="./js/jquery.min.js"></script>
+
+
+
+	<script type="text/javascript">
+
+	var powerball_dict = {};
+
+		function getPowerball() {
+
+			var powerball_nums = new Array;
+
+			$.ajax({
+				type: "GET",
+				url: "https://allorigins.me/get?url=https://www.wilottery.com/lottogames/powerballhistoryOD.aspx",
+				contentType: "application/json; charset=utf-8",
+				data: "{}",
+				dataType: "jsonp",
+				cache: false,
+				success: function(msg) {
+
+					var html_json = msg;
+
+					var html_str = html_json.contents;
+
+					var html_str_min = html_str.replace(/(\r\n|\n|\r)/gm,"");
+
+					var html = ($.parseHTML(html_str_min)[23]).innerHTML;
+					var html2 = ($.parseHTML(html)[3]).innerHTML;
+					var html3 = ($.parseHTML(html2)[3]).innerHTML;
+					var html4 = ($.parseHTML(html3)[1]).innerHTML;
+					var html5 = ($.parseHTML(html4)[1]).innerHTML;
+					var html6 = ($.parseHTML(html5)[12]).innerHTML;
+					var html7 = ($.parseHTML(html6)[1]).innerHTML;
+					var html8 = ($.parseHTML(html7)[2]).innerHTML;
+
+					var powerball_table = $.parseHTML(html8)[1];
+					powerball_table = powerball_table.cells;
+
+					powerball_date = powerball_table[0].innerHTML;
+					powerball_num1 = powerball_table[1].innerHTML;
+					powerball_num2 = powerball_table[2].innerHTML;
+					powerball_num3 = powerball_table[3].innerHTML;
+					powerball_num4 = powerball_table[4].innerHTML;
+					powerball_num5 = powerball_table[5].innerHTML;
+					powerball_pbnum = powerball_table[6].innerHTML;
+					powerball_powerplay = ($.parseHTML(powerball_table[7].innerHTML)[1]).innerHTML;
+
+					powerball_nums.push(powerball_num1);
+					powerball_nums.push(powerball_num2);
+					powerball_nums.push(powerball_num3);
+					powerball_nums.push(powerball_num4);
+					powerball_nums.push(powerball_num5);
+
+					powerball_dict["Date"] = powerball_date;
+					powerball_dict["Numbers"] = powerball_nums;
+					powerball_dict["Powerball"] = powerball_pbnum;
+					powerball_dict["Power Play"] = powerball_powerplay;
+
+					for (var i = 0; i < powerball_nums.length; i++)
+					{
+
+						document.getElementById("win_nums").innerHTML += powerball_nums[i] + "\t";
+
+					}
+
+					document.getElementById("win_nums").innerHTML += "Powerball: " + powerball_dict["Powerball"];
+
+					document.getElementById("date").innerHTML += powerball_dict["Date"];
+
+
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+
+					alert("ERROR\nText Status: " + textStatus + "\nError: " + errorThrown + "\nReady State: " + jqXHR.readyState + "\nResponse Text: " + jqXHR.responseText + "\nStatus: " + jqXHR.status);
+
+				}
+
+			});
+
+			return false;
+
+		}
+
+		function checkWin()
+		{
+
+			var cash_won = 0;
+
+			var user_numbers = new Array;
+
+			var number1 = parseInt(document.getElementById("n1").value);
+			var number2 = parseInt(document.getElementById("n2").value);
+			var number3 = parseInt(document.getElementById("n3").value);
+			var number4 = parseInt(document.getElementById("n4").value);
+			var number5 = parseInt(document.getElementById("n5").value);
+			var powerball_number = parseInt(document.getElementById("pb").value);
+
+			user_numbers.push(number1);
+			user_numbers.push(number2);
+			user_numbers.push(number3);
+			user_numbers.push(number4);
+			user_numbers.push(number5);
+
+			if ( (number1 == "" || number1 == null) || (number2 == "" || number2 == null) || (number3 == "" || number3 == null) || (number4 == "" || number4 == null) || (number5 == "" || number5 == null) || (powerball_number == "" || powerball_number == null) )
+			{
+				alert("One or more numbers were not entered");
+			}
+			else if ((new Set(user_numbers)).size !== user_numbers.length)
+			{
+				alert("One or more numbers were duplicates")
+			}
+			else if ( (number1 < 1 || number1 > 69) || (number2 < 1 || number2 > 69) || (number3 < 1 || number3 > 69) || (number4 < 1 || number4 > 69) || (number5 < 1 || number5 > 69) || (powerball_number < 1 || powerball_number > 26) )
+			{
+				alert("One or more of the numbers were out of range")
+			}
+			else if (isNaN(number1) || isNaN(number2) || isNaN(number3) || isNaN(number4) || isNaN(number5) || isNaN(powerball_number) || number1.length > 2 || number2.length > 2 || number3.length > 2 || number4.length > 2 || number5.length > 2 || powerball_number.length > 2)
+			{
+				alert("One or more numbers were entered incorrectly")
+			}
+			else
+			{
+
+				var matches = 0;
+				var powerball_win = false;
+
+				var powerplay = powerball_dict["Power Play"];
+				powerplay = parseInt(powerplay.substring(0, powerplay.length - 1));
+
+				var winning_numbers = powerball_dict["Numbers"];
+
+				for (var i = 0; i < winning_numbers.length; i++)
+				{
+
+					current_number_win = parseInt(winning_numbers[i]);
+
+					for (var j = 0; j < user_numbers.length; j++)
+					{
+
+						current_number_user = user_numbers[j];
+
+						if (current_number_win == current_number_user)
+						{
+
+							matches = matches + 1;
+
+						}
+
+					}
+
+				}
+
+				var winning_powerball = powerball_dict["Powerball"];
+
+				if (winning_powerball == powerball_number)
+				{
+
+					powerball_win = true;
+
+				}
+
+			}
+
+			if (powerball_win == true || (matches == 1 && powerball_win == true) )
+			{
+
+				cash_won = 4;
+
+				if (powerplay_select == "y")
+				{
+
+					cash_won = cash_won * powerplay;
+
+				}
+
+			}
+
+			if ( (matches == 2 && powerball_win == true) || matches == 3 )
+			{
+
+				cash_won = 7;
+
+				if (powerplay_select == "y")
+				{
+
+					cash_won = cash_won * powerplay;
+
+				}
+
+			}
+
+			if ( (matches == 3 || powerball_win == true) || matches == 4 )
+			{
+
+				cash_won = 100;
+
+				if (powerplay_select == "y")
+				{
+
+					cash_won = cash_won * powerplay;
+
+				}
+
+			}
+
+			if (matches == 4 && powerball_win == true)
+			{
+
+				cash_won = 50000;
+
+				if (powerplay_select == "y")
+				{
+
+					cash_won = cash_won * powerplay;
+
+				}
+
+			}
+
+			if (matches == 5 && powerball_win == false)
+			{
+
+				cash_won = 1000000;
+
+				if (powerplay_select == "y")
+				{
+
+					cash_won = cash_won * 2;
+
+				}
+
+			}
+
+			if (matches == 5 && powerball_win == true)
+			{
+
+				cash_won = "Jackpot";
+
+			}
+
+			var powerplay_select = document.getElementById("pp").value;
+
+			if (cash_won == "Jackpot")
+			{
+
+				document.getElementById("cash").innerHTML = "Congratulations!!! You won the jackpot!!!";
+
+			}
+			else if (cash_won == 0)
+			{
+
+				document.getElementById("cash").innerHTML = "You did not win";
+
+			}
+			else
+			{
+
+				document.getElementById("cash").innerHTML = "You won $" + cash_won + "!";
+
+			}
+
+			document.getElementById("n1").value = "";
+			document.getElementById("n2").value = "";
+			document.getElementById("n3").value = "";
+			document.getElementById("n4").value = "";
+			document.getElementById("n5").value = "";
+			document.getElementById("pb").value = "";
+			document.getElementById("pp").value = "n";
+
+		}
+
+		getPowerball();
+
+	</script>
+
+	<!-- Setting the content scaling of the page -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!-- The title that will be displayed in the tab of a browser -->
+	<title>Powerball</title>
+
+</head>
+
+
+<body>
+
+	<div>
+
+		<center><h1>Powerball Winnings</h1></center>
+
+		<center><h4 id="date" /></center>
+
+		<table width="100%">
+
+			<tr align="center">
+
+				<th>No. 1</th>
+				<th>No. 2</th>
+				<th>No. 3</th>
+				<th>No. 4</th>
+				<th>No. 5</th>
+				<th>Powerball</th>
+				<th>Power Play</th>
+
+			</tr>
+
+			<tr align="center">
+
+				<td><input type="text" id="n1" style="text-align: center"></td>
+				<td><input type="text" id="n2" style="text-align: center"></td>
+				<td><input type="text" id="n3" style="text-align: center"></td>
+				<td><input type="text" id="n4" style="text-align: center"></td>
+				<td><input type="text" id="n5" style="text-align: center"></td>
+				<td><input type="text" id="pb" style="text-align: center; background-color: red; color:white;"></td>
+				<td><select style="width: 100px;" id="pp"><option value="n">No</option><option value="y">Yes</option><select></td>
+
+			</tr>
+
+			<tr>
+
+				<td></td>
+				<td></td>
+				<td></td>
+				<td><center><button style="margin-top: 15%;" onclick="checkWin();">Check if you won</button></center></td>
+				<td></td>
+				<td></td>
+				<td></td>
+
+			</tr>
+
+		</table>
+
+	</div>
+
+	<div id="win">
+
+		<center><h2 id="cash" /></center>
+
+	</div>
+
+	<div id="numbers_date">
+
+		<center><h3>Winning Numbers:</h3></center>
+		<center><h3 id="win_nums" /></center>
+
+	</div>
+
+</body>
+
+</html>

@@ -1,0 +1,572 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+
+	<!-- Sources for the use of jQuery, jQuery Mobile, and AJAX -->
+	<script src="./js/jquery.min.js"></script>
+
+
+
+	<script type="text/javascript">
+
+		var imdb_dict = {};
+		var rt_dict = {};
+		var mc_dict = {};
+
+		var combined_dict = {};
+		var combined_dict_sorted=[];
+
+		function getIMDb() {
+
+			var imdb_table = "<table width=\"100%\"><col width=\"10%\" /><col width=\"70%\" /><col width=\"10%\" /><col width=\"10%\" /><tr><th align=\"left\">Position</th><th align=\"left\">Title</th><th align=\"left\">Year</th><th align=\"left\">Rating</th></tr>";
+
+			$.ajax({
+				type: "GET",
+				url: "https://allorigins.me/get?url=https://www.imdb.com/chart/top",
+				contentType: "application/json; charset=utf-8",
+				data: "{}",
+				dataType: "jsonp",
+				cache: false,
+				success: function(msg) {
+
+					var html_json = msg;
+
+					var html_str = html_json.contents;
+
+					var html_str_min = html_str.replace(/(\r\n|\n|\r)/gm,"");
+
+					var html = ((($.parseHTML(html_str_min))[0]).innerHTML);
+					var html2 = ((($.parseHTML(html))[74]).innerHTML);
+					var html3 = ((($.parseHTML(html2))[1]).innerHTML);
+					var html4 = ((($.parseHTML(html3))[9]).innerHTML);
+					var html5 = ((($.parseHTML(html4))[5]).innerHTML);
+					var html6 = ((($.parseHTML(html5))[1]).innerHTML);
+					var html7 = ((($.parseHTML(html6))[1]).innerHTML);
+					var html8 = ((($.parseHTML(html7))[3]).innerHTML);
+					var html9 = ((($.parseHTML(html8))[1]).innerHTML);
+					var html10 = ((($.parseHTML(html9))[2]).innerHTML);
+					var html11 = ((($.parseHTML(html10))[1]).innerHTML);
+					var html12 = ((($.parseHTML(html11))[11]).innerHTML);
+					var html13 = ((($.parseHTML(html12))[5]).innerHTML);
+					var html14 = ((($.parseHTML(html13))[5]).innerHTML);
+
+					var top250table = $.parseHTML(html14);
+
+					var current_movie_array = new Array;
+
+					for (var i = 1; i < top250table.length; i += 2)
+					{
+
+						var current_movie = top250table[i];
+						var current_movie_content = current_movie.cells;
+
+						var current_movie_position = Math.ceil(i/2);
+
+						var current_movie_info_array = $.parseHTML(current_movie_content[1].innerHTML);
+						var current_movie_rating_array = $.parseHTML(current_movie_content[2].innerHTML);
+
+						var current_movie_title = (current_movie_info_array[1].innerHTML).replace(/ *\([^)]*\) */g, "");
+						var current_movie_year = (current_movie_info_array[3].innerHTML).substring(1, (current_movie_info_array[3].innerHTML).length-1);
+						var current_movie_rating = current_movie_rating_array[1].innerHTML;
+
+						current_movie_array.push(current_movie_year);
+						current_movie_array.push(current_movie_rating);
+
+						imdb_dict[current_movie_title] = current_movie_array;
+
+						current_movie_array = [];
+
+						imdb_table += "<tr>";
+						imdb_table += "<td>" + current_movie_position + "</td>";
+						imdb_table += "<td>" + current_movie_title + "</td>";
+						imdb_table += "<td>" + current_movie_year + "</td>";
+						imdb_table += "<td>" + current_movie_rating + "</td>";
+						imdb_table += "</tr>"
+
+					}
+
+					imdb_table += "</table>";
+
+					document.getElementById("imdb").innerHTML += "<center><h1>IMDb Top 250</h1></center>";
+					document.getElementById("imdb").innerHTML += imdb_table;
+
+					console.log(imdb_dict);
+
+					getRT();
+
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+
+					alert("ERROR\nText Status: " + textStatus + "\nError: " + errorThrown + "\nReady State: " + jqXHR.readyState + "\nResponse Text: " + jqXHR.responseText + "\nStatus: " + jqXHR.status);
+
+				}
+
+			});
+
+			return false;
+
+		}
+
+		function getRT() {
+
+			$("#rt").insertAfter("#imdb");
+
+			var rt_table = "<table width=\"100%\"><col width=\"10%\" /><col width=\"70%\" /><col width=\"10%\" /><col width=\"10%\" /><tr><th align=\"left\">Position</th><th align=\"left\">Title</th><th align=\"left\">Year</th><th align=\"left\">Rating</th></tr>";
+
+			$.ajax({
+				type: "GET",
+				url: "https://allorigins.me/get?url=https://www.rottentomatoes.com/top/bestofrt/",
+				contentType: "application/json; charset=utf-8",
+				data: "{}",
+				dataType: "jsonp",
+				cache: false,
+				success: function(msg) {
+
+					var html_json = msg;
+
+					var html_str = html_json.contents;
+
+					var html_str_min = html_str.replace(/(\r\n|\n|\r)/gm,"");
+
+					var html = ($.parseHTML(html_str_min))[48];
+					var html2 = $.parseHTML(html.innerHTML)[5];
+					var html3 = $.parseHTML(html2.innerHTML)[1];
+					var html4 = $.parseHTML(html3.innerHTML)[1];
+					var html5 = $.parseHTML(html4.innerHTML)[3];
+					var html6 = $.parseHTML(html5.innerHTML)[9];
+					var html7 = $.parseHTML(html6.innerHTML)[3];
+
+					var top100table = $.parseHTML(html7.innerHTML);
+
+					var current_movie_array = new Array;
+
+					for (var i = 0; i < top100table.length; i++)
+					{
+
+							var current_movie = top100table[i];
+
+							var current_movie_position = i+1;
+
+							var current_movie_rating_image = $.parseHTML(current_movie.innerHTML)[3];
+							var current_movie_rating_image_html =  $.parseHTML(current_movie_rating_image.innerHTML)[1];
+							var current_movie_rating_html =  $.parseHTML(current_movie_rating_image_html.innerHTML)[3];
+							var current_movie_rating_space = current_movie_rating_html.innerHTML;
+
+							var current_movie_rating = current_movie_rating_space.substring(6, current_movie_rating_space.length);
+
+							var current_movie_title_year = $.parseHTML(current_movie.innerHTML)[5];
+							var current_movie_title_year_html =  $.parseHTML(current_movie_title_year.innerHTML)[1];
+							var current_movie_title_year_text = current_movie_title_year_html.innerHTML;
+
+							var current_movie_title = (current_movie_title_year_text.substring(12, (current_movie_title_year_text.length)-7)).replace(/ *\([^)]*\) */g, "");
+							var current_movie_year = current_movie_title_year_text.substring((current_movie_title_year_text.length)-5, current_movie_title_year_text.length-1);
+
+							current_movie_array.push(current_movie_year);
+							current_movie_array.push(current_movie_rating);
+
+							rt_dict[current_movie_title] = current_movie_array;
+
+							current_movie_array = [];
+
+							rt_table += "<tr>";
+							rt_table += "<td>" + current_movie_position + "</td>";
+							rt_table += "<td>" + current_movie_title + "</td>";
+							rt_table += "<td>" + current_movie_year + "</td>";
+							rt_table += "<td>" + current_movie_rating + "</td>";
+							rt_table += "</tr>"
+
+					}
+
+					rt_table += "</table>";
+
+					document.getElementById("rt").innerHTML += "<center><h1>Rotten Tomatoes Top 100</h1></center>";
+					document.getElementById("rt").innerHTML += rt_table;
+
+					console.log(rt_dict);
+
+					//getMC();
+
+					getMC();
+
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+
+					alert("ERROR\nText Status: " + textStatus + "\nError: " + errorThrown + "\nReady State: " + jqXHR.readyState + "\nResponse Text: " + jqXHR.responseText + "\nStatus: " + jqXHR.status);
+
+				}
+
+			});
+
+			return false;
+
+		}
+
+		function getMC() {
+
+			$("#mc").insertAfter("#rt");
+
+			var mc_table = "<table width=\"100%\"><col width=\"10%\" /><col width=\"70%\" /><col width=\"10%\" /><col width=\"10%\" /><tr><th align=\"left\">Position</th><th align=\"left\">Title</th><th align=\"left\">Year</th><th align=\"left\">Rating</th></tr>";
+
+			$.ajax({
+				type: "GET",
+				url: "https://allorigins.me/get?url=https://www.metacritic.com/browse/movies/score/metascore/all/filtered",
+				contentType: "application/json; charset=utf-8",
+				data: "{}",
+				dataType: "jsonp",
+				cache: false,
+				success: function(msg) {
+
+					var html_json = msg;
+
+					var html_str = html_json.contents;
+
+					var html_str_min = html_str.replace(/(\r\n|\n|\r)/gm,"");
+
+					var html = $.parseHTML(html_str_min)[45];
+					var html2 = $.parseHTML(html.innerHTML)[1];
+					var html3 = $.parseHTML(html2.innerHTML)[9];
+					var html4 = $.parseHTML(html3.innerHTML)[1];
+					var html5 = $.parseHTML(html4.innerHTML)[3];
+					var html6 = $.parseHTML(html5.innerHTML)[7];
+
+					var html7 = $.parseHTML(html6.innerHTML)[1];
+					var html8 = $.parseHTML(html7.innerHTML)[1];
+					var html9 = $.parseHTML(html8.innerHTML)[1];
+					var html10 = $.parseHTML(html9.innerHTML)[7];
+					var html11 = $.parseHTML(html10.innerHTML)[1];
+					var html12 = $.parseHTML(html11.innerHTML)[1];
+					var html13 = $.parseHTML(html12.innerHTML)[1];
+
+					var top100table1 = $.parseHTML(html13.innerHTML);
+
+					var html14 = $.parseHTML(html6.innerHTML)[5];
+					var html15 = $.parseHTML(html14.innerHTML)[1];
+					var html16 = $.parseHTML(html15.innerHTML)[1];
+					var html17 = $.parseHTML(html16.innerHTML)[1];
+					var html18 = $.parseHTML(html17.innerHTML)[1];
+
+					var top100table2 = $.parseHTML(html18.innerHTML);
+
+					var html19 = $.parseHTML(html6.innerHTML)[9];
+					var html20 = $.parseHTML(html19.innerHTML)[1];
+					var html21 = $.parseHTML(html20.innerHTML)[1];
+					var html22 = $.parseHTML(html21.innerHTML)[1];
+					var html23 = $.parseHTML(html22.innerHTML)[1];
+
+					var top100table3 = $.parseHTML(html23.innerHTML);
+
+					var current_movie_array = new Array;
+
+					var current_movie_position = 0;
+
+					for (var i = 0; i < top100table1.length; i += 4)
+					{
+							var current_movie = top100table1[i];
+
+							current_movie_position += 1;
+
+							var current_movie_rating_content = $.parseHTML(current_movie.innerHTML)[3];
+							var current_movie_rating_html = $.parseHTML(current_movie_rating_content.innerHTML)[1];
+							var current_movie_rating_inner_content = $.parseHTML(current_movie_rating_html.innerHTML)[0];
+							var current_movie_rating_obj = $.parseHTML(current_movie_rating_inner_content.innerHTML)[0];
+							var current_movie_rating = current_movie_rating_obj.textContent;
+
+							var current_movie_title_content = $.parseHTML(current_movie.innerHTML)[5];
+							var current_movie_title_html = $.parseHTML(current_movie_title_content.innerHTML)[1];
+							var current_movie_title_inner_content = $.parseHTML(current_movie_title_html.innerHTML)[1];
+							var current_movie_title_obj = $.parseHTML(current_movie_title_inner_content.innerHTML)[0];
+							var current_movie_title = (current_movie_title_obj.textContent).replace(/ *\([^)]*\) */g, "");
+
+							var current_movie_date_content = $.parseHTML(current_movie.innerHTML)[9];
+							var current_movie_date_html = $.parseHTML(current_movie_date_content.innerHTML)[1];
+							var current_movie_date_obj = $.parseHTML(current_movie_date_html.innerHTML)[0];
+							var current_movie_date_text = current_movie_date_obj.textContent;
+							var current_movie_year = current_movie_date_text.substring(current_movie_date_text.length-4, current_movie_date_text.length);
+
+							current_movie_array.push(current_movie_year);
+							current_movie_array.push(current_movie_rating);
+
+							mc_dict[current_movie_title] = current_movie_array;
+
+							current_movie_array = [];
+
+							mc_table += "<tr>";
+							mc_table += "<td>" + current_movie_position + "</td>";
+							mc_table += "<td>" + current_movie_title + "</td>";
+							mc_table += "<td>" + current_movie_year + "</td>";
+							mc_table += "<td>" + current_movie_rating + "</td>";
+							mc_table += "</tr>"
+
+					}
+
+					for (var i = 0; i < top100table2.length; i += 4)
+					{
+							var current_movie = top100table2[i];
+
+							current_movie_position += 1;
+
+							var current_movie_rating_content = $.parseHTML(current_movie.innerHTML)[3];
+							var current_movie_rating_html = $.parseHTML(current_movie_rating_content.innerHTML)[1];
+							var current_movie_rating_inner_content = $.parseHTML(current_movie_rating_html.innerHTML)[0];
+							var current_movie_rating_obj = $.parseHTML(current_movie_rating_inner_content.innerHTML)[0];
+							var current_movie_rating = current_movie_rating_obj.textContent;
+
+							var current_movie_title_content = $.parseHTML(current_movie.innerHTML)[5];
+							var current_movie_title_html = $.parseHTML(current_movie_title_content.innerHTML)[1];
+							var current_movie_title_inner_content = $.parseHTML(current_movie_title_html.innerHTML)[1];
+							var current_movie_title_obj = $.parseHTML(current_movie_title_inner_content.innerHTML)[0];
+							var current_movie_title = current_movie_title_obj.textContent;
+
+							var current_movie_date_content = $.parseHTML(current_movie.innerHTML)[9];
+							var current_movie_date_html = $.parseHTML(current_movie_date_content.innerHTML)[1];
+							var current_movie_date_obj = $.parseHTML(current_movie_date_html.innerHTML)[0];
+							var current_movie_date_text = current_movie_date_obj.textContent;
+							var current_movie_year = current_movie_date_text.substring(current_movie_date_text.length-4, current_movie_date_text.length);
+
+							current_movie_array.push(current_movie_year);
+							current_movie_array.push(current_movie_rating);
+
+							mc_dict[current_movie_title] = current_movie_array;
+
+							current_movie_array = [];
+
+							mc_table += "<tr>";
+							mc_table += "<td>" + current_movie_position + "</td>";
+							mc_table += "<td>" + current_movie_title + "</td>";
+							mc_table += "<td>" + current_movie_year + "</td>";
+							mc_table += "<td>" + current_movie_rating + "</td>";
+							mc_table += "</tr>"
+
+					}
+
+					for (var i = 0; i < top100table3.length; i += 4)
+					{
+							var current_movie = top100table3[i];
+
+							current_movie_position += 1;
+
+							var current_movie_rating_content = $.parseHTML(current_movie.innerHTML)[3];
+							var current_movie_rating_html = $.parseHTML(current_movie_rating_content.innerHTML)[1];
+							var current_movie_rating_inner_content = $.parseHTML(current_movie_rating_html.innerHTML)[0];
+							var current_movie_rating_obj = $.parseHTML(current_movie_rating_inner_content.innerHTML)[0];
+							var current_movie_rating = current_movie_rating_obj.textContent;
+
+							var current_movie_title_content = $.parseHTML(current_movie.innerHTML)[5];
+							var current_movie_title_html = $.parseHTML(current_movie_title_content.innerHTML)[1];
+							var current_movie_title_inner_content = $.parseHTML(current_movie_title_html.innerHTML)[1];
+							var current_movie_title_obj = $.parseHTML(current_movie_title_inner_content.innerHTML)[0];
+							var current_movie_title = current_movie_title_obj.textContent;
+
+							var current_movie_date_content = $.parseHTML(current_movie.innerHTML)[9];
+							var current_movie_date_html = $.parseHTML(current_movie_date_content.innerHTML)[1];
+							var current_movie_date_obj = $.parseHTML(current_movie_date_html.innerHTML)[0];
+							var current_movie_date_text = current_movie_date_obj.textContent;
+							var current_movie_year = current_movie_date_text.substring(current_movie_date_text.length-4, current_movie_date_text.length);
+
+							current_movie_array.push(current_movie_year);
+							current_movie_array.push(current_movie_rating);
+
+							mc_dict[current_movie_title] = current_movie_array;
+
+							current_movie_array = [];
+
+							mc_table += "<tr>";
+							mc_table += "<td>" + current_movie_position + "</td>";
+							mc_table += "<td>" + current_movie_title + "</td>";
+							mc_table += "<td>" + current_movie_year + "</td>";
+							mc_table += "<td>" + current_movie_rating + "</td>";
+							mc_table += "</tr>"
+
+					}
+
+					mc_table += "</table>";
+
+					document.getElementById("mc").innerHTML += "<center><h1>Metacritic Top 100</h1></center>";
+					document.getElementById("mc").innerHTML += mc_table;
+
+					console.log(mc_dict);
+
+					compareDicts();
+
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+
+					alert("ERROR\nText Status: " + textStatus + "\nError: " + errorThrown + "\nReady State: " + jqXHR.readyState + "\nResponse Text: " + jqXHR.responseText + "\nStatus: " + jqXHR.status);
+
+				}
+
+			});
+
+			return false;
+
+		}
+
+		function compareDicts()
+		{
+
+			for (var imdb_movie in imdb_dict)
+			{
+
+				for (var rt_movie in rt_dict)
+				{
+
+					for (var mc_movie in mc_dict)
+					{
+
+						if (imdb_movie == rt_movie)
+						{
+
+							if (rt_movie == mc_movie)
+							{
+
+								console.log(mc_movie);
+
+								var match_movie = imdb_movie;
+
+								var match_year = (imdb_dict[match_movie])[0];
+
+								var imdb_rating = (imdb_dict[match_movie])[1];
+								var rt_rating = (rt_dict[match_movie])[1];
+								var mc_rating = (mc_dict[match_movie])[1];
+
+								var imdb_rating_100 = parseInt(imdb_rating) * 10;
+								var rt_rating_100 = parseInt(rt_rating.substring(0, rt_rating.length - 1));
+								var mc_rating_100 = parseInt(mc_rating);
+
+								console.log(mc_rating_100);
+
+								var combined_rating = (imdb_rating_100 + rt_rating_100 + mc_rating_100) / 3;
+								combined_rating = Math.round(combined_rating * 10) / 10
+
+								combined_dict[match_movie] = combined_rating;
+
+							}
+
+						}
+
+					}
+
+				}
+
+			}
+
+			console.log(combined_dict);
+
+			sortProperties();
+
+			return false;
+
+		}
+
+		function sortProperties()
+		{
+
+			for(var key in combined_dict)
+			{
+
+				if(combined_dict.hasOwnProperty(key))
+				{
+
+					combined_dict_sorted.push([key, combined_dict[key]]); // each item is an array in format [key, value]
+
+				}
+
+			}
+
+
+			// sort items by value
+			combined_dict_sorted.sort(function(a, b)
+			{
+	  		return a[1]-b[1];
+			});
+
+			combined_dict_sorted.reverse();
+
+			displayCombined();
+
+			return false;
+
+		}
+
+		function displayCombined()
+		{
+
+			$("#comb").insertAfter("#mc");
+
+			var number = 1;
+			var position = 0;
+
+			var combined_table = "<table width=\"100%\"><col width=\"10%\" /><col width=\"70%\" /><col width=\"10%\" /><col width=\"10%\" /><tr><th align=\"left\">Position</th><th align=\"left\">Title</th><th align=\"left\">Year</th><th align=\"left\">Rating</th></tr>";
+
+			for (var i = 0; i < combined_dict_sorted.length; i++)
+			{
+
+				position = position + 1
+				title = (combined_dict_sorted[i])[0];
+				year = (imdb_dict[title])[0];
+				rating = (combined_dict_sorted[i])[1];
+
+				if (i != 0)
+				{
+
+					previous_position_rating = (combined_dict_sorted[i-1])[1];
+
+					if (previous_position_rating != rating)
+					{
+
+						number = number + 1;
+
+					}
+
+				}
+
+				combined_table += "<tr>";
+				combined_table += "<td>" + position + " (" + number + ")" + "</td>";
+				combined_table += "<td>" + title + "</td>";
+				combined_table += "<td>" + year + "</td>";
+				combined_table += "<td>" + rating + "</td>";
+				combined_table += "</tr>"
+
+			}
+
+			combined_table += "</table>";
+
+			document.getElementById("comb").innerHTML += "<center><h1>Top Combined Movies</h1></center>";
+			document.getElementById("comb").innerHTML += combined_table;
+
+			return false;
+
+		}
+
+		getIMDb();
+
+
+
+
+
+	</script>
+
+	<!-- Setting the content scaling of the page -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!-- The title that will be displayed in the tab of a browser -->
+	<title>Top Combined Movies</title>
+
+</head>
+
+
+<body>
+
+	<div id="imdb" />
+
+	<div id="rt" />
+
+	<div id="mc" />
+
+	<div id="comb" />
+
+</body>
+
+</html>
