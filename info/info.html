@@ -1,156 +1,12 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<!DOCTYPE HTML>
+<html lang = "en">
 <head>
-
-	<link href="https://fonts.googleapis.com/css?family=Oswald:bold" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css?family=Khula" rel="stylesheet">
 
 	<script src="js/jquery.min.js"></script>
 	<script src="js/greensock-js/src/minified/TweenMax.min.js"></script>
 
-
-<style>
-
-	h1, h2, h3, h4, h5, h6
-	{
-    	font-family: 'Oswald', sans-serif;
-	}
-
-	p, div, ul, li, tr, th, td
-	{
-    	font-family: 'Khula', sans-serif;
-	}
-
-.topnav {
-    background-color: #333;
-    overflow: hidden;
-}
-
-/* Style the links inside the navigation bar */
-.topnav a {
-    float: left;
-    display: inline-block;
-    color: #f2f2f2;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-    font-size: 17px;
-}
-
-/* Change the color of links on hover */
-.topnav a:hover {
-    background-color: #ddd;
-    color: black;
-}
-
-/* Add a color to the active/current link */
-.topnav a.active {
-    background-color: #4CAF50;
-    color: white;
-}
-
-.text{
-  display: inline-block;
-  font-size: 15vmin;
-  line-height: 1.205;
-}
-
-.text__first, .text__second{
-  position: relative;
-}
-
-.text__word{
-  opacity: 0;
-}
-
-.text__first-bg, .text__second-bg{
-  display: block;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  left: 0;
-  top: 0;
-  z-index: 100;
-  transform-origin: left;
-  transform: scaleX(0);
-}
-
-.text__first-bg{
-  background-color: #3883d8;
-}
-
-.text__second-bg{
-  background-color: #eaea20;
-}
-
-.text__second{
-  margin-left: 15vmin;
-}
-
-.dropbtn {
-    background-color: #333;;
-    color: white;
-    padding: 16px;
-    font-size: 16px;
-    border: none;
-}
-
-.dropdown {
-    position: fixed;
-		float: left;
-		left: 0;
-    display: inline-block;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f1f1f1;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
-
-.dropdown-content a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-}
-
-.dropdown-content a:hover {background-color: #ddd}
-
-.dropdown:hover .dropdown-content {
-    display: block;
-}
-
-.dropdown:hover .dropbtn {
-    background-color: #ddd;
-		color: #333;
-}
-
-#myBtn {
-    display: none; /* Hidden by default */
-    position: fixed; /* Fixed/sticky position */
-    bottom: 20px; /* Place the button at the bottom of the page */
-    right: 30px; /* Place the button 30px from the right */
-    z-index: 99; /* Make sure it does not overlap */
-    border: none; /* Remove borders */
-    outline: none; /* Remove outline */
-    background-color: #f1f1f1;
-		box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    cursor: pointer; /* Add a mouse pointer on hover */
-    padding: 15px; /* Some padding */
-    border-radius: 10px; /* Rounded corners */
-    font-size: 18px; /* Increase font size */
-}
-
-#myBtn:hover {
-	background-color: #ddd;
-	color: #333;
-}
-
-</style>
+	<link href="../src/info_css.css" rel="stylesheet">
+	<script src="../src/info_js.js"></script>
 
 	<meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
 	<meta http-equiv="content-language" content="en-us">
@@ -161,17 +17,12 @@
 	<meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
   <title>Richard Mangerie</title>
+
 </head>
 
 
 
-
-
-
-
-
-
-<body bgcolor="white">
+<body>
 
 	<div class="dropdown">
 
@@ -222,29 +73,15 @@
 <p><b>Click <a href="https://www.rickymangerie.com/info/info_test4.html" target="_blank">here</a> to view this online resume with advanced HTML and JavaScript techniques (in progress)</b></p>
 </center>
 
-<table width="90%">
-  <tr>
-		<th align="left" width="10%">Major:</th>
-		<td>Computer Science</td>
-	</tr>
-	<tr>
-	<tr>
-		<th align="left" width="10%">Tracks:</th>
-		<td>Human-Computer Interaction, Software Engineering</td>
-	</tr>
-	<tr></tr>
-	<tr>
-		<th align="left" valign="top">Minor:</th>
-		<td>Currently Not Declared</td>
-	</tr>
-	<tr>
-	<tr>
-		<th align="left">Email:</th>
-		<td>
-			<a href="mailto:ricky@drexel.edu">ricky@drexel.edu</a>
-		</td>
-	</tr>
-</table>
+<div class="overview">
+
+	<p> <b>Major: </b> Computer Science</p>
+	<p> <b>Tracks: </b> Human-Computer Interaction, Software Engineering</p>
+	<p> <b>Minor: </b> Currently Not Declared</p>
+	<p> <b>Email: </b> <a href="mailto:ricky@drexel.edu">ricky@drexel.edu</a></p>
+
+</div>
+
 
 <br>
 
@@ -254,11 +91,11 @@
 
 <h2>Programming and Scripting Languages</h2>
 
-<div>
+<div class="technical-divs">
 
-	<div style="float: left; width: auto; border: none;">
+	<div class="contents">
 
-		<h3 style="margin: 0;">Proficient</h3>
+		<h3>Proficient</h3>
 
 		<ul>
 
@@ -274,9 +111,9 @@
 
 	</div>
 
-	<div style="padding-left: 35px; float: left; width: auto; border: none;">
+	<div class="contents" id="limited-div">
 
-		<h3 style="margin: 0;">Limited</h3>
+		<h3>Limited</h3>
 
 		<ul>
 
@@ -293,10 +130,12 @@
 </div>
 
 
-<div style="clear: left;">
+<div class="technical-divs">
 
-	<h2 style="margin: 0; padding: 0;">Software</h2>
-	<div style="float: left; width: auto; border: none;">
+	<h2>Software</h2>
+
+	<div class="contents">
+
 		<ul>
 			<li>IntelliJ</li>
 			<li>Atom</li>
@@ -308,9 +147,11 @@
 			<li>Xcode</li>
 			<li>Photoshop</li>
 		</ul>
+
 	</div>
 
-	<div style="float: left; width: auto; border: none;">
+	<div class="contents">
+
 		<ul>
 			<li>GitHub and Git Shell (VCS)</li>
 			<li>Terminal (Mac)</li>
@@ -318,39 +159,56 @@
 			<li>DrRacket</li>
 			<li>Vim</li>
 		</ul>
+
 	</div>
+
 </div>
 
 
 
-<div style="clear: left;">
-	<h2 style="margin: 0; padding: 0;">IT Certifications</h2>
+<div class="technical-divs">
+
+	<h2>IT Certifications</h2>
+
 	<ul>
 	  <li><a href="http://wwwnew.testout.com/certification/pro-exams/pc-pro" target="_blank">TestOut PC Pro</a></li>
 		<li><a href="http://wwwnew.testout.com/certification/pro-exams/network-pro" target="_blank">TestOut Network Pro</a></li>
 	</ul>
-</div>
 
 </div>
+
+
 
 <hr id="Employment" width="100%" color="gold">
+
+
+
+
+
 
 <h1>Employment</h1>
 
 <h2>Current Employment</h2>
 
-<h3 style="margin: 0; padding: 0;"><i>Currently in classes at Drexel University</i></h3>
+<h3><i>Currently in classes at Drexel University</i></h3>
 
 <h2>Previous Employment</h2>
 
-<h3 style="margin: 0; padding: 0;">OSIsoft, LLC</h3>
-<div style="float: left; width: auto; border: none;">
-	<p><b>Software Developer</b></p>
+<h3 class="employment-position">OSIsoft, LLC</h3>
+
+
+<div class="employment-titles-dates">
+
+	<div class="employment-titles">
+		<p><b>Software Developer</b></p>
+	</div>
+	<div class="employment-dates">
+		<p><b>September 2017 to March 2018</b></p>
+	</div>
+
 </div>
-<div style="float: right; width: auto; border: none;">
-	<p><b>September 2017 to March 2018</b></p>
-</div>
-<div style="clear: both;">
+
+<div class="employment-descritpion">
 	<ul>
 		<li>Helped convert from the PI Vision 3 to the PI Vision 4 web-client visualization tool</li>
 		<li>Developed telemetry code in C# to track usage of the PI Vision conversion tool</li>
@@ -359,14 +217,22 @@
 	</ul>
 </div>
 
-<h3 style="margin: 0; padding: 0;">The Children's Hospital of Philadelphia, Center for Autism Research</h3>
-<div style="float: left; width: auto; border: none;">
-	<p><b>Motion-Capture Engineering Clinical Research Assistant</b></p>
+
+
+<h3 class="employment-position">The Children's Hospital of Philadelphia, Center for Autism Research</h3>
+
+<div class="employment-titles-dates">
+
+	<div class="employment-titles">
+		<p><b>Motion-Capture Engineering Clinical Research Assistant</b></p>
+	</div>
+	<div class="employment-dates">
+		<p><b>September 2016 to March 2017</b></p>
+	</div>
+
 </div>
-<div style="float: right; width: auto; border: none;">
-	<p><b>September 2016 to March 2017</b></p>
-</div>
-<div style="clear: both;">
+
+<div class="employment-descritpion">
 	<ul>
 		<li>Worked with accelerometer- and gyroscope-based wearables to track motion</li>
 		<li>Developed code in R to ensure data quality and to produce and format wearable output</li>
@@ -376,16 +242,23 @@
 	</ul>
 </div>
 
-<br>
 
-<h3 style="margin: 0; padding: 0;">Z Pub and Diner</h3>
-<div style="float: left; width: auto; border: none;">
-	<p><b>Host</b></p>
+
+
+<h3 class="employment-position">Z Pub and Diner</h3>
+
+<div class="employment-titles-dates">
+
+	<div class="employment-titles">
+		<p><b>Host</b></p>
+	</div>
+	<div class="employment-dates">
+		<p><b>January 2013 to August 2016</b></p>
+	</div>
+
 </div>
-<div style="float: right; width: auto; border: none;">
-	<p><b>January 2013 to August 2016</b></p>
-</div>
-<div style="clear: both;">
+
+<div class="employment-descritpion">
 	<ul>
 		<li>Implemented an effective technological waiting system under the NoWait interface</li>
 		<li>Coordinated an efficient seating system to ensure a better workplace flow and promote customer satisfaction</li>
@@ -397,11 +270,11 @@
 
 <hr id="Academics" width="100%" color="blue">
 
-<h1>Academics</h1>
+<h1 class="headers">Academics</h1>
 
-<h2>Technical Project</h2>
+<h2 class="headers">Technical Project</h2>
 
-<h3 style="margin: 0; padding: 0;">F.I.N.N. the Robot Butler</h3>
+<h3>F.I.N.N. the Robot Butler</h3>
 <div style="float: left; width: auto; border: none;">
 	<p><b>Project Manager</b></p>
 </div>
@@ -567,43 +440,6 @@
 <hr width="100%" color="gold">
 
 <font size="-1">Last updated June 7th, 2018</font>
-
-<script>
-
-	$(function() {
-
-	  var tl = new TimelineLite({delay: 1}),
-	    firstBg = document.querySelectorAll('.text__first-bg'),
-	    secBg = document.querySelectorAll('.text__second-bg'),
-	    word  = document.querySelectorAll('.text__word');
-
-	  tl
-	    .to(firstBg, 0.2, {scaleX:1})
-	    .to(secBg, 0.2, {scaleX:1})
-	    .to(word, 0.1, {opacity:1}, "-=0.1")
-	    .to(firstBg, 0.2, {scaleX:0})
-	    .to(secBg, 0.2, {scaleX:0});
-
-	});
-
-	// When the user scrolls down 20px from the top of the document, show the button
-window.onscroll = function() {scrollFunction()};
-
-function scrollFunction() {
-    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-        document.getElementById("myBtn").style.display = "block";
-    } else {
-        document.getElementById("myBtn").style.display = "none";
-    }
-}
-
-// When the user clicks on the button, scroll to the top of the document
-function topFunction() {
-    document.body.scrollTop = 0; // For Safari
-    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-}
-
-</script>
 
 </body>
 </html>
